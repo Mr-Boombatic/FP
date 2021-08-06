@@ -1,0 +1,35 @@
+#lang racket
+(require 2htdp/image)
+(define empty-board '())
+
+(define (adjoin-position new-row rest-of-queens)
+  (cons new-row rest-of-queens))
+
+(define (safe? k position)
+  (define (queens-safe? queen-count rest-rows)
+    (define (queen-safe? col row)
+      (let ((last-col k) (last-row (car position)))
+        (and (not (= last-row row))
+             (not (= (abs (- last-row row))
+                     (abs (- last-col col)))))))
+    (cond ((null? rest-rows) true)
+          ((queen-safe? queen-count (car rest-rows))
+             (queens-safe? (- queen-count 1) (cdr rest-rows)))
+          (else false)))
+  (queens-safe? (- k 1) (cdr position)))
+
+(define (queens board-size)
+  (define (queen-cols k)
+    (if (= k 0)
+        (list empty-board)
+        (filter (λ (positions) (safe? k positions))
+                (append-map
+                 (λ (rest-of-queens)
+                   (map (λ (new-row)
+                          (adjoin-position new-row rest-of-queens))
+                        (range 1 (+ board-size 1))))
+                 (queen-cols (- k 1))))))
+  (queen-cols board-size))
+
+(displayln (above (triangle 40 "solid" "red")
+                  (rectangle 40 30 "solid" "black")))

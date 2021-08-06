@@ -1,0 +1,6 @@
+#lang racket
+
+(define (repeat temp n)
+  if (= n 1)
+  temp
+  (lambda (x) (temp ((repeat temp (- n 1)) x))))

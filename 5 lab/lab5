@@ -1,0 +1,9 @@
+#lang racket
+
+(define (subsets l)
+  (if (null? l)
+      '(())
+      (let ((rest (subsets (cdr l))))
+        (append rest (map (lambda(x)
+                           (cons (car l) x))
+                         rest)))))
